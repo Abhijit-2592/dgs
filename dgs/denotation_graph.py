@@ -1,6 +1,7 @@
 import os
 import networkx as nx
 import pydot
+import spacy
 
 from wasabi import msg
 from tqdm import tqdm
@@ -178,3 +179,35 @@ def _format_node(node_idx, graph, max_samples=2):
     return "node index: {}\ntext: {}\nsample images: {}\nsample captions: {}".format(
         node_idx, node_info["text"], node_info["images"][:max_samples], node_info["captions"][:max_samples]
     )
+
+
+def find_similar_nodes(
+    graph: "DenotationGraph", query: str, threshold: float = 0.7, spacy_model: str = "en_core_web_lg", **pipe_kwargs
+) -> List[Tuple[int, str, float]]:
+    """Finds nodes that are similar to given query using spacy's similarity function
+
+    Arguments:
+        graph (DenotationGraph): The denotation graph
+        query (str): The query
+        threshold (float): Threshold for matching
+        spacy_model (str): The spacy model to use. Default "en_core_web_lg"
+        **pipe_kwargs : additional keyword arguments to pass to nlp.pipe: https://spacy.io/api/language#pipe
+
+    Returns:
+        The list of matches of form (node idx, node text, similarity score) in decreasing order of score
+    """
+    msg.info("Loading {} model in spacy".format(spacy_model))
+    nlp = spacy.load(spacy_model)
+    nlp.select_pipes(enable="tok2vec")
+    query = nlp(query)
+
+    texts = []
+    for node in tqdm(graph.nodes, desc="Finding all text in denotation graph"):
+        texts.append(graph.get_node_info(node)["text"])
+
+    matches = []
+    for i, t in tqdm(enumerate(nlp.pipe(texts, **pipe_kwargs)), total=len(texts), desc="Finding similar nodes"):
+        s = query.similarity(t)
+        if s >= threshold:
+            matches.append((i, t.text, s))
+    return sorted(matches, key=lambda t: t[2])[::-1]
