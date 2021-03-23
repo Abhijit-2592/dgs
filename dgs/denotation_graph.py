@@ -164,7 +164,7 @@ def visualize_denotation_graph(graph: "DenotationGraph", to_file: str, max_sampl
     max_samples (int): Max number of corresponding images, captions to show in visualization of each node, Default 2
     """
     vis_graph = pydot.Dot(graph_type="digraph")
-    for edge in tqdm(graph.edges, desc="adding edges to pydot graph"):
+    for edge in graph.edges:
         vis_graph.add_edge(
             pydot.Edge(
                 _format_node(edge[0], graph, max_samples), _format_node(edge[1], graph, max_samples), label=graph.get_edge_info(edge)["edge_type"]
