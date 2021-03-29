@@ -29,7 +29,8 @@ class Vit(nn.Module):
             channels (int): Number of input channels. Default 3.
             patch_size (int): The patch size for the Vit. Default 16 (16 X 16 pixels).
             vit_dim (int): The dimension of the vision transformer. This is the output shape of the feedforward layer before the transformers
-                This is also the output shape of the VIT. Default 768. The original model used 1024, But I use 768 to match with the Bert pretrained model
+                This is also the output shape of the VIT. Default 768. The original Vit model uses 1024.
+                But I use 768 to match with the Bert pretrained model.
             num_transformer_layers (int): The number of transformer encoder blocks to include. Default 6.
             nheads (int): Number of heads in Multi-HeadSelf-Attention. Default 8.
             transformer_mlp_dim (int): The dimension of the MLP layer used in each transformer block. Default 2048.
@@ -62,6 +63,7 @@ class Vit(nn.Module):
         super().__init__()
         assert image_size % patch_size == 0, "Image dimensions must be divisible by the patch size."
         assert vit_dim % nheads == 0, "The vit_dim must be divisible by the nheads for MultiheadSelfAttention to work"
+        self.vit_dim = vit_dim
         num_patches = (image_size // patch_size) ** 2
         patch_dim = channels * patch_size ** 2
         assert classifier_type in {"token", "gap", None}, "classifier_type type must be either token, gap or None"
