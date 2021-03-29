@@ -36,7 +36,8 @@ class Vit(nn.Module):
             classifier_type (str): The classifier type to use. One of 'token', 'gap'. Default None.
                 - "token": returns the embedding corresponding to the [CLS] token (index 1). output_shape= (Batch, vit_dim)
                 - "gap": returns the embeddings after averaging. output_shape = (Batch, vit_dim)
-                - None: returns all the embeddings for the patches. output_shape = (Batch, Num_patches + 1, vit_dim). Num_patches + 1 because, [CLS] token
+                - None: returns all the embeddings for the patches. output_shape = (Batch, Num_patches + 1, vit_dim).
+                    Num_patches + 1 because, [CLS] token
                 - See here for more details: https://github.com/google-research/vision_transformer/issues/60.
             transformer_dropout (float): Dropout for each transformer layer. Default 0.1
             embedding_dropout (float): Dropout for the pos_embedding + patch_embedding for VIT. Default 0.1
