@@ -12,7 +12,7 @@ class Vit(nn.Module):
         image_size: int,
         channels: int = 3,
         patch_size: int = 16,
-        vit_dim: int = 1024,
+        vit_dim: int = 768,
         num_transformer_layers: int = 6,
         nheads: int = 8,
         transformer_mlp_dim: int = 2048,
@@ -29,7 +29,7 @@ class Vit(nn.Module):
             channels (int): Number of input channels. Default 3.
             patch_size (int): The patch size for the Vit. Default 16 (16 X 16 pixels).
             vit_dim (int): The dimension of the vision transformer. This is the output shape of the feedforward layer before the transformers
-                This is also the output shape of the VIT. Default 1024.
+                This is also the output shape of the VIT. Default 768. The original model used 1024, But I use 768 to match with the Bert pretrained model
             num_transformer_layers (int): The number of transformer encoder blocks to include. Default 6.
             nheads (int): Number of heads in Multi-HeadSelf-Attention. Default 8.
             transformer_mlp_dim (int): The dimension of the MLP layer used in each transformer block. Default 2048.
