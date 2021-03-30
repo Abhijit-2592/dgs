@@ -1,9 +1,10 @@
+import einops
 import torch
 
 from typing import Optional
 from torch import nn
 from einops.layers.torch import Rearrange
-from einops import repeat
+from einops import repeat, rearrange
 
 
 class Vit(nn.Module):
@@ -54,7 +55,7 @@ class Vit(nn.Module):
             >>> image_encoder = Vit(image_size=image_size, vit_dim=vit_dim, patch_size=16, classifier_type=None)
             >>> image = torch.randn(5, 3, image_size, image_size)
             >>> output = image_encoder(image)
-            >>> print(output.shape) # torch.Size([5, 65, 1024]), num patches = (256 // 16) ^ 2= 64 + 1 (CLS) token
+            >>> print(output.shape) # torch.Size([65, 5, 1024]), num patches = (256 // 16) ^ 2= 64 + 1 (CLS) token
 
         References:
             - https://github.com/lucidrains/vit-pytorch (Pytorch VIT implementation)
@@ -90,11 +91,12 @@ class Vit(nn.Module):
         x = torch.cat((class_tokens, x), dim=1)
         x = x + self.pos_embedding[:, : (n + 1)]
         x = self.embedding_dropout(x)
+        x = rearrange(x, "b l e -> l b e")  # pytorch expects the tensor of form (seql, batch_size, embeddings)
         x = self.transformer(x)
         if self.classifier_type == "token":
-            x = x[:, 0]
+            x = x[0]
         elif self.classifier_type == "gap":
-            x = x.mean(dim=1)
+            x = x.mean(dim=0)
         else:
             pass
         return x
