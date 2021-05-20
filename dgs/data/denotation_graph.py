@@ -5,7 +5,7 @@ import spacy
 
 from wasabi import msg
 from tqdm import tqdm
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Set
 
 
 class DenotationGraph(object):
@@ -67,11 +67,11 @@ class DenotationGraph(object):
     def get_out_edges(self, node_idx: int) -> List[Tuple[int, int]]:
         return list(self.graph.out_edges(node_idx))
 
-    def get_children_nodes(self, node_idx: int) -> List[int]:
-        return list(self.graph.successors(node_idx))
+    def get_children_nodes(self, node_idx: int) -> Set[int]:
+        return set(self.graph.successors(node_idx))
 
-    def get_parent_nodes(self, node_idx: int) -> List[int]:
-        return list(self.graph.predecessors(node_idx))
+    def get_parent_nodes(self, node_idx: int) -> Set[int]:
+        return set(self.graph.predecessors(node_idx))
 
     def get_sibling_nodes(self, node_idx: int) -> Dict[int, List[int]]:
         """Finds the sibling nodes
@@ -115,8 +115,8 @@ class DenotationGraph(object):
         return len(self.nodes)
 
     @property
-    def nodes(self) -> List[int]:
-        return list(self.graph.nodes)
+    def nodes(self) -> Set[int]:
+        return set(self.graph.nodes)
 
     @property
     def edges(self) -> List[Tuple[int, int]]:
